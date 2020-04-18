@@ -1,0 +1,26 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+/testcase
+check.py
+pure/check.py
+pure/tools/__pycache__/
+pure/tools/image/__init__.pyc
+pure/tools/image/__pycache__/
+pure/tools/image/backend.pyc
+pure/tools/image/region.pyc
+pure/tools/image/sym.pyc
+pure/tools/image/symbol.pyc
+pure/tools/util/__init__.pyc
+pure/tools/util/__pycache__/
+pure/tools/util/const.pyc
+pure/tools/util/error.pyc
+pure/tools/util/file.pyc
+pure/tools/util/hash.pyc
+pure/tools/util/log.pyc
