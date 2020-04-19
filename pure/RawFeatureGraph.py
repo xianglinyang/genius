@@ -15,94 +15,55 @@ class RawFeatureGraph:
     Attributes:
         func_name(string)
         cfg
-        graph(nx.Digraph)
         raw_feature(list):[numerice_features, structual_features]
+        _graph(nx.Digraph)
     """
     def __init__(self, func_name, cfg):
         self.func_name = func_name
         self.cfg = cfg
-        self.graph = nx.DiGraph()
         self.raw_features = []
-
-    ######################################################################
-    # numeric feature
-    ######################################################################
-    def cal_const(self, insn):
-        """
-        get const from an instrcution
-
-        Args:
-            insn:(capstone.insn) an instuction
-
-        Returns:
-            string_consts(list):
-            numeric_consts(list):
-        """
-        string_consts = []
-        numeric_consts = []
-        return string_consts, numeric_consts
-
-    def cal_BB_consts(self, block):
-        """
-        get string and numeric consts from a block
-        Args:
-            block: angr.block
-
-        Returns:
-            string_consts(list): string consts from a block
-            numeric_consts(list): numeric consts from a block
-
-        """
-        string_consts = []
-        numeric_consts = []
-
-        return string_consts, numeric_consts
-
-    def cal_insts(self, block):
-        num = 0
-        return num
-
-    def cal_transfer_insts(self, block):
-        num = 0
-        return num
-
-    def cal_call_insts(self, block):
-        num = 0
-        return num
-
-    def cal_arithmetic_insts(self, block):
-        num = 0
-        return num
 
     ######################################################################
     # structual features
     ######################################################################
-    def get_offspring(self):
-        """
-        get offspring of every node in a cfg
+    @property
+    def graph(self):
+        """the networkx graph of cfg"""
+        if not hasattr(self, '_graph'):
+            g = nx.DiGraph()
+            # TODO
+            self._graph = g
+        return self._graph
 
-        Args:
-            cfg
-            raw_feature: set(), inst_addr:[numeric_feature]
+    @property
+    def betweeness(self):
+        """the betweeness centrality of a node in graph"""
+        if not hasattr(self, '_betweeness'):
+            betweenness = nx.betweenness_centrality(self.graph)
+            self._betweeness = betweenness
+        return self._betweeness
 
-        Returns:
-            raw_feature: set(), inst_addr:[numeric_feature,offspring_num]
-        """
-
+    @property
+    def offspring(self):
+        """the outdegree of every node in graph"""
+        return []
 
 
 
 
 def get_a_BB():
-    bin = angr.Project("/home/xianglin/PycharmProjects/genius/testcase/2423496af35d94a87156b063ea5cedffc10a70a1/vmlinux")
+    bin = "/home/xianglin/PycharmProjects/genius/testcase/2423496af35d94a87156b063ea5cedffc10a70a1/vmlinux"
     # bin = "/home/xianglin/Graduation/executables/string_constant"
-    # img = Image(bin)
+    img = Image(bin)
     # func_name = "main"
-    # entry = 66664
-    # func_cfg = img.get_cfg(func_name)
+    func_name = "dccp_rcv_state_process"
+    entry = 66664
+    func_cfg = img.get_cfg(func_name)
     # img.project.loader.memory.load()
-    bb = bin.factory.block(bin.entry)
-    bb.capstone.pp()
+    # bb = bin.factory.block(bin.entry)
+    gra = RawFeatureGraph(func_name, func_cfg)
+    print(1)
+
 
 if __name__ == "__main__":
     get_a_BB()
