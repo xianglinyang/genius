@@ -8,6 +8,7 @@
 out
 gen
 /testcase
+
 check.py
 pure/check.py
 pure/tools/__pycache__/
