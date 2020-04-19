@@ -11,7 +11,6 @@ from tools.util.asm import is_jump
 ######################################################################
 # numeric feature
 ######################################################################
-
 def cal_const(insn):
     """
     get const from an instrcution
@@ -46,11 +45,6 @@ def cal_BB_consts(block):
 
 
 def cal_insts(block):
-    """
-    get instuctions num from a block
-    :param block:
-    :return: num(int)
-    """
     num = 0
     return num
 
@@ -61,29 +55,10 @@ def cal_transfer_insts(block):
 
 
 def cal_call_insts(block):
-    num=0
+    num = 0
     return num
 
 
 def cal_arithmetic_insts(block):
     num = 0
     return num
-
-######################################################################
-# structual features
-######################################################################
-
-
-def get_a_BB():
-    bin = angr.Project("/home/xianglin/PycharmProjects/genius/testcase/2423496af35d94a87156b063ea5cedffc10a70a1/vmlinux")
-    # bin = "/home/xianglin/Graduation/executables/string_constant"
-    # img = Image(bin)
-    # func_name = "main"
-    # entry = 66664
-    # func_cfg = img.get_cfg(func_name)
-    # img.project.loader.memory.load()
-    bb = bin.factory.block(bin.entry)
-    bb.capstone.pp()
-
-if __name__ == "__main__":
-    get_a_BB()
