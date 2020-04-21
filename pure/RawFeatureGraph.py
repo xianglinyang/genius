@@ -19,7 +19,7 @@ class RawFeatureGraph:
         func_name(string)
         old_cfg
         g(networkx.Digraph)
-        entry(int): entry annd
+        entry(int): entry addr
     """
     def __init__(self, func_name, img, entry):
         self.img = img
