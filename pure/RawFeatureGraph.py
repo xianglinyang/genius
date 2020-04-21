@@ -15,11 +15,10 @@ class RawFeatureGraph:
     """a graph to extract raw features of a cfg
 
     Attributes:
-        img(tools.image.Image)
-        func_name(str)
-        old_cfg
-        g(networkx.Digraph)
-        entry(int): entry addr
+        func_name(string)
+        cfg
+        raw_feature(list):[numerice_features, structual_features]
+        _graph(nx.Digraph)
     """
     def __init__(self, func_name, img, entry):
         self.img = img
