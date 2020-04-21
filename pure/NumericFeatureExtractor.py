@@ -4,6 +4,7 @@ __Auther__ = 'xianglin'
 
 import angr
 import capstone
+import claripy
 from tools.image import Image
 from tools.util.asm import is_jump
 
@@ -15,7 +16,10 @@ it is based on ARM64 instruction set, might add more CPU arch in the future
 ######################################################################
 def cal_const(img, insn, offset):
     """
-    get const from an instrcution
+    get const from an instruction
+    if op is in call function, pass
+    else:   if it is an imm, check if it is an addr or numeric
+            else [mem]
 
     Args:
         insn:(capstone.insn) an instuction
@@ -43,7 +47,9 @@ def cal_const(img, insn, offset):
     if op_type == capstone.arm64.ARM64_OP_IMM:
         # if adr, then string/numeric?, else numeric
         if check_type(op_mnemonic, {'adr'}):
-            addr = operand.value.imm
+            # turn int to addr hex
+            bvv = claripy.BVV(operand.value.imm, 64)
+            addr = bvv.args[0]
             string_const = get_string(img, addr)
             if string_const is None:
                 numeric_const = get_numeric(img, addr)
@@ -59,16 +65,17 @@ def cal_const(img, insn, offset):
             if base_reg in base_pointer:
                 disp = operand.value.mem.disp
                 addr = insn.address + disp
-                imm_value = img.project.loader.memory.load(addr, 4)
-                numeric_consts.append(imm_value)
+                numeric_const = get_numeric(img, addr)
+                numeric_consts.append(numeric_const)
 
     return string_consts, numeric_consts
 
 
-def cal_BB_consts(block):
+def cal_BB_consts(img, block):
     """
     get string and numeric consts from a block
     Args:
+        img(tools.image.Image)
         block: angr.block
 
     Returns:
@@ -78,6 +85,14 @@ def cal_BB_consts(block):
     """
     string_consts = []
     numeric_consts = []
+    cs = block.capstone
+    insns = cs.insns
+    for insn in insns:
+        num_operands = len(insn.operands)
+        for offset in range(num_operands):
+            strings, numerics = cal_const(img, insn, offset)
+            string_consts += strings
+            numeric_consts += numerics
 
     return string_consts, numeric_consts
 
@@ -123,16 +138,17 @@ def check_type(t, t_set):
 def get_string(img, addr):
     string = ""
     for i in range(1000):
-        c = img.project.loader.memory.load(addr + i * 8, 1)
-        if c == 0:
+        c = img.project.loader.memory.load(addr + i, 1)
+        if ord(c) == 0:
             break
         elif 40 <= ord(c) < 128:
-            string += ord(c)
+            string += chr(ord(c))
         else:
             return None
     return string
 
 
 def get_numeric(img, addr):
-    num = img.project.loader.memory.load(addr, 4)
+    b = img.project.loader.memory.load(addr, 4)
+    num = int.from_bytes(b, "little")
     return num
