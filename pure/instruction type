@@ -1,5 +1,5 @@
 1. calls
-    arm64_CI {'b', 'bl', 'cbz', 'cbnz', 'tbz, 'tbnz', 'b.ge', 'b.le', 'b.ne', 'b.le', 'b.gt', 'b.lt'}
+    arm64_CI {'b', 'bl', 'cbz', 'cbnz', 'tbz', 'tbnz', 'b.ge', 'b.le', 'b.ne', 'b.le', 'b.gt', 'b.lt'}
     x86_CI {'call', 'jal', 'jalr'}
 
 2. logic instruction
@@ -13,8 +13,8 @@
 	arm_TI = {'mvn', "mov", 'movz', 'movn'}
 
 4. arithmetic instruction
-    arm64_AI = {'add', 'sub', }
+    arm64_AI = {'add', 'sub', 'adc', 'sbc', ''}
 
 5. others
-    arm64 = {'ldr', 'ldrb', 'ldp', ''str', 'stp', 'adr', 'adrp',}
+    arm64 = {'ldr', 'ldrb', 'ldp', ''str', 'stp', 'adr', 'adrp'}
     no relevant = {'uxtb', 'sxtw, 'cmp', 'tst', 'ret', 'ubfx'}
