@@ -87,7 +87,7 @@ class RawFeatureGraph:
         return self.g
 
 
-def get_a_BB():
+def main():
     debug_vmlinux = "../testcase/2423496af35d94a87156b063ea5cedffc10a70a1/vmlinux"
     # debug_vmlinux="../testcase/x86_add"
     # debug_vmlinux = "/home/xianglin/Graduation/executables/x64_a"
@@ -105,4 +105,4 @@ def get_a_BB():
 
 
 if __name__ == "__main__":
-    get_a_BB()
+    main()
