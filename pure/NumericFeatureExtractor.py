@@ -14,7 +14,7 @@ it is based on ARM64 instruction set, might add more CPU arch in the future
 ######################################################################
 # numeric feature
 ######################################################################
-def cal_const(img, insn, offset):
+def get_consts(img, insn, offset):
     """
     get const from an instruction
     if op is in call function, pass
@@ -71,7 +71,7 @@ def cal_const(img, insn, offset):
     return string_consts, numeric_consts
 
 
-def cal_BB_consts(img, block):
+def get_BB_consts(img, block):
     """
     get string and numeric consts from a block
     Args:
@@ -90,7 +90,7 @@ def cal_BB_consts(img, block):
     for insn in insns:
         num_operands = len(insn.operands)
         for offset in range(num_operands):
-            strings, numerics = cal_const(img, insn, offset)
+            strings, numerics = get_consts(img, insn, offset)
             string_consts += strings
             numeric_consts += numerics
 
