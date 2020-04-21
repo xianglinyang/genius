@@ -98,21 +98,43 @@ def cal_BB_consts(img, block):
 
 
 def cal_insts(block):
+    """calculate the number of instructions in a block"""
     return block.instructions
 
 
 def cal_transfer_insts(block):
+    arm_TI = {'mvn', "mov"}
     num = 0
+    cs = block.capstone
+    insns = cs.insns
+    for insn in insns:
+        op_type = insn.insn.mnemonic
+        if check_type(op_type, arm_TI):
+            num = num + 1
     return num
 
 
 def cal_call_insts(block):
+    arm64_CI = {'b', 'bl', 'cbz', 'cbnz', 'tbz', 'tbnz'}
     num = 0
+    cs = block.capstone
+    insns = cs.insns
+    for insn in insns:
+        op_type = insn.insn.mnemonic
+        if check_type(op_type, arm64_CI):
+            num = num + 1
     return num
 
 
 def cal_arithmetic_insts(block):
+    arm64_AI = {'add', 'sub', 'adc', 'sbc'}
     num = 0
+    cs = block.capstone
+    insns = cs.insns
+    for insn in insns:
+        op_type = insn.insn.mnemonic
+        if check_type(op_type, arm64_AI):
+            num = num + 1
     return num
 
 
