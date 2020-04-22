@@ -88,6 +88,18 @@ class RawFeatureGraph:
         return self.g
 
 
+def get_func_rfg(path, func_name):
+    """get the raw features vector of a function"""
+    img = Image(path)
+    entry_base = img.get_symbol_addr(func_name)
+    features = []
+    if not entry_base:
+        return
+    gra = RawFeatureGraph(func_name, img, entry_base)
+    for node in gra.graph.nodes():
+        features.append(gra.feature_vec(node))
+    return features
+
 def main():
     debug_vmlinux = "../testcase/2423496af35d94a87156b063ea5cedffc10a70a1/vmlinux"
     # debug_vmlinux="../testcase/x86_add"
@@ -96,13 +108,14 @@ def main():
     # func_name = "dccp_rcv_state_process"
     func_name = "show_stat"
     entry_base = img.get_symbol_addr(func_name)
+    f = []
     if not entry_base:
         return
     gra = RawFeatureGraph(func_name, img, entry_base)
     for node in gra.graph.nodes():
         node.pp()
         print(gra.feature_vec(node))
-    print(1)
+        f.append(gra.feature_vec(node))
 
 
 if __name__ == "__main__":
