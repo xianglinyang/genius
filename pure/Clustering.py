@@ -12,6 +12,8 @@ import numpy as np
 from sklearn.cluster import spectral_clustering
 from sklearn.metrics import jaccard_score
 import CodebookGenerator
+import RawFeatureGraph
+import codebook
 
 
 def processing_grouping(res, matrix): # grouping res and similarity matrix
@@ -41,7 +43,7 @@ def gen_codebook(graphs, group_num=16):
             if i >= j:
                 W_matrix[i, j] = W_matrix[j, i]
             else:
-                W_matrix[i, j] = CodebookGenerator.normalized_ACFG_distance(graphs[i], graphs[j])
+                W_matrix[i, j] = CodebookGenerator.normalized_ACFG_similarity(graphs[i], graphs[j])
     res = spectral_clustering(W_matrix, n_clusters=group_num)
     group_res = []
     for i in range(group_num):
@@ -54,4 +56,17 @@ def gen_codebook(graphs, group_num=16):
         codebook.append(graphs[i])
     return codebook
 
+
+if __name__ == "__main__":
+    # debug_vmlinux = "../testcase/2423496af35d94a87156b063ea5cedffc10a70a1/vmlinux"
+    # img = Image(debug_vmlinux)
+    # funcs = img.funcs
+    # graphs = []
+    # for i in range(32):
+    #     func = funcs.pop()
+    #     graphs.append(RawFeatureGraph.get_func_rfg(debug_vmlinux, func))
+    # print(graphs)
+    graphs = codebook.codebook8
+    codebook = gen_codebook(graphs, group_num=4)
+    print(codebook)
 

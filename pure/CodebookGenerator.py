@@ -12,19 +12,42 @@ from tools.image import Image
 from tools.util.asm import is_jump
 import numpy as np
 from sklearn.cluster import spectral_clustering
-from sklearn.metrics import jaccard_score
+from collections import Counter
 
 
-def jaccard_similarity(s1, s2):
+def jaccard_similarity(a, b):
     """
-    calculate the cost between two consts list, jaccard distance
+    calculate the similarity between two consts list, jaccard distance
     Args:
-        s1(list): a list of string consts
-        s2(list)
+        a(list): a list of string consts
+        b(list)
     Returns:
-        cost(float)
+        similarity(float)
     """
-    return jaccard_score(s1, s2)
+    if len(a) == 0 and len(b) == 0:
+        return 1.0
+    if len(a) == 0 or len(b) == 0:
+        return 0.0
+    _a = Counter(a)
+    _b = Counter(b)
+    c = (_a - _b) + (_b - _a)
+    intersection = (len(a) + len(b) - sum(c.values())) / 2
+    similarity = intersection / (len(a) + len(b) - intersection)
+    return similarity
+
+
+def jaccard_distance(a, b):
+    """
+        calculate the distance between two consts list, jaccard distance is set to be 1 - jaccard similarity
+        Args:
+            a(list): a list of string consts
+            b(list)
+        Returns:
+            distance(float)
+        """
+    similarity  = jaccard_similarity(a, b)
+    distance = 1 - similarity
+    return distance
 
 
 def BB_distance(v1, v2):
@@ -41,9 +64,9 @@ def BB_distance(v1, v2):
     """
     alpha = np.array([10.82, 14.47, 6.54, 66.22, 41.37, 55.65, 198.67, 30.66])
     max_a = np.hstack((np.array([1.0, 1.0]), np.maximum(v1[2:], v2[2:])))
-    str_d = jaccard_score(v1[0], v2[0])
-    num_d = jaccard_score(v1[1], v2[1])
-    distance_a = np.hstack(np.ndarray([str_d, num_d]), np.abs(v1[2:] - v2[2:]))
+    str_d = jaccard_distance(v1[0], v2[0])
+    num_d = jaccard_distance(v1[1], v2[1])
+    distance_a = np.hstack((np.array([str_d, num_d]),  np.abs(np.array(v1[2:])-np.array(v2[2:]))))
     distance = np.sum(np.multiply(alpha, distance_a)) / np.sum(np.multiply(alpha, max_a))
     return distance
 
@@ -111,7 +134,7 @@ def km(weight):
     return ans, match
 
 
-def count_weight(g1,g2):
+def count_weight(g1, g2):
     """
     count the weight between two graph
     Args:
@@ -143,7 +166,7 @@ def ACFG_distance(g1, g2):
     """
     #
     weight = count_weight(g1, g2)
-    ans, = km(weight)
+    ans, match = km(weight)
     return -ans
 
 
@@ -155,16 +178,31 @@ def ACFG_distance_with_N(g):
         distance = -BB_distance(v, empty_V)
         d = [distance for i in range(len(g))]
         weight.append(d)
-    ans, = km(weight)
+    ans, match = km(weight)
     return -ans
 
 
-def normalized_ACFG_distance(g1, g2):
+def normalized_ACFG_similarity(g1, g2):
     cost = ACFG_distance(g1, g2)
     cost1 = ACFG_distance_with_N(g1)
     cost2 = ACFG_distance_with_N(g2)
     distance = 1 - cost / max(cost1, cost2)
     return distance
+
+
+if __name__ == "__main__":
+    v1 = [['control/shutdown', ''], [0, 760], 1, 1, 7, 1, 1, 0.00013061650992685477]
+    v2 = [[''], [2992], 1, 1, 15, 5, 1, 0.00013061650992685477]
+    v3 = [['', '', ''], [0, 2912, 0, 0, 232, 2832], 3, 0, 20, 3, 1, 0.0]
+    q = BB_distance(v1, v1)
+    j = jaccard_similarity(v1[0], v1[0])
+    g1 = [v2, v3]
+    g2 = [v1, v3]
+    b = ACFG_distance_with_N(g1)
+    c = ACFG_distance_with_N(g2)
+    d = ACFG_distance(g1, g2)
+    a = normalized_ACFG_similarity(g1, g2)
+    print(a, b, c, d, end=" ")
 
 
 
